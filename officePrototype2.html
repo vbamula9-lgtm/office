@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE OFFICE // COMMAND CENTER (REACHER & REDOX)</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #08080a;
+            --card-bg: rgba(15, 12, 14, 0.75);
+            --card-hover: rgba(28, 18, 22, 0.9);
+            
+            /* RED & CRIMSON THEME */
+            --red-primary: #ff2a4b;
+            --red-glow: rgba(255, 42, 75, 0.45);
+            --red-dark: #b3122b;
+            
+            /* CYAN ACCENTS */
+            --cyan-accent: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.4);
+            
+            --text-main: #fcfcfc;
+            --text-muted: #a0a0b0;
+            --border-color: rgba(255, 42, 75, 0.35);
+            --danger-red: #ff3344;
+            --success-green: #2ea043;
+            --font-mono: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(255, 42, 75, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(179, 18, 43, 0.12) 0%, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .workspace-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 1;
+        }
+
+        .header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 42, 75, 0.1);
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--red-primary);
+            text-transform: uppercase;
+            text-shadow: 0 0 12px var(--red-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--red-primary);
+            box-shadow: 0 0 12px var(--red-primary);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 75, 0.7); }
+            70% { transform: scale(1.3); box-shadow: 0 0 0 6px rgba(255, 42, 75, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 42, 75, 0); }
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .action-btn, button {
+            background: rgba(255, 42, 75, 0.12);
+            border: 1px solid var(--border-color);
+            color: var(--red-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover, button:hover {
+            background: rgba(255, 42, 75, 0.28);
+            box-shadow: 0 0 15px var(--red-glow);
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .office-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.9);
+        }
+
+        .office-card h2, .office-card h3 {
+            color: var(--red-primary);
+            font-family: var(--font-mono);
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 8px rgba(255, 42, 75, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .nav-station-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            transition: all 0.25s ease;
+        }
+
+        .nav-station-card:hover {
+            background: rgba(255, 42, 75, 0.08);
+            border-color: var(--red-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--red-glow);
+        }
+
+        .nav-station-card h4 {
+            color: var(--text-main);
+            font-family: var(--font-mono);
+        }
+
+        .nav-station-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        input[type="text"], input[type="password"], input[type="date"], input[type="number"], input[type="url"], select, textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+            margin-bottom: 0.8rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        textarea { resize: vertical; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 42, 75, 0.15);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(255, 42, 75, 0.15);
+            color: var(--red-primary);
+            font-family: var(--font-mono);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .link-btn {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .link-btn:hover {
+            background: rgba(255, 42, 75, 0.2);
+            border-color: var(--red-primary);
+            color: var(--red-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--red-glow);
+        }
+
+        .timer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 42, 75, 0.25);
+        }
+
+        .timer-display {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 12px var(--red-glow);
+            font-family: var(--font-mono);
+        }
+
+        .graph-container {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 42, 75, 0.25);
+            padding: 0.4rem;
+        }
+
+        canvas {
+            width: 100%;
+            height: 120px;
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary-glow {
+            flex: 1;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+            color: #ffffff;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 42, 75, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-glow:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 6px 22px var(--red-glow);
+        }
+
+        .btn-secondary-glow {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--cyan-accent);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-secondary-glow:hover {
+            background: rgba(0, 240, 255, 0.25);
+            color: #fff;
+        }
+
+        .telegram-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--red-dark);
+            color: #ffffff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 28px;
+            box-shadow: 0 4px 20px rgba(255, 42, 75, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: 1px solid rgba(255, 42, 75, 0.4);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .telegram-float:hover {
+            background-color: var(--red-primary);
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px var(--red-glow);
+        }
+
+        .back-nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--red-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-nav-btn:hover {
+            background: rgba(255, 42, 75, 0.2);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid rgba(255, 42, 75, 0.2);
+            margin: 1.2rem 0;
+        }
+
+        ul { list-style-type: none; }
+        li { padding: 0.5rem 0; border-bottom: 1px dashed rgba(255, 42, 75, 0.2); }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- LOGIN VIEW -->
+    <!-- ========================================== -->
+    <div id="loginView" class="workspace-container" style="max-width: 450px; margin-top: 10vh;">
+        <div class="office-card" style="text-align: center;">
+            <h2 style="justify-content: center;"><span class="status-dot"></span> THE OFFICE // AUTH</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Select operator credentials to access command center.</p>
+            <form id="loginForm">
+                <div style="text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--red-primary); font-family: var(--font-mono);">OPERATOR:</label>
+                    <select id="usernameInput" required style="margin-top: 5px;">
+                        <option value="">-- Choose Member --</option>
+                        <option value="reacher">Reacher</option>
+                        <option value="redox">Redox</option>
+                    </select>
+                </div>
+                <div style="text-align: left; margin-top: 10px;">
+                    <label style="font-size: 0.8rem; color: var(--red-primary); font-family: var(--font-mono);">SECURE PASSKEY:</label>
+                    <input type="password" id="passwordInput" placeholder="Enter password..." required style="margin-top: 5px;">
+                </div>
+                <button type="submit" class="btn-primary-glow" style="width: 100%; margin-top: 1rem;">Initialize Workspace ↗</button>
+            </form>
+            <p id="loginError" style="color: var(--danger-red); margin-top: 1rem; font-size: 0.85rem; display: none;">Invalid password credentials!</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MAIN OFFICE WORKSPACE -->
+    <!-- ========================================== -->
+    <div id="officeApp" class="workspace-container" style="display: none;">
+
+        <!-- HEADER BAR -->
+        <header class="header-bar">
+            <div class="header-title">
+                <span class="status-dot"></span> THE OFFICE // COMMAND CENTER
+            </div>
+            <div class="header-controls">
+                <span>OPERATOR: <strong id="currentUserDisplay" style="color: var(--cyan-accent);">---</strong></span>
+                <button class="action-btn" id="logoutBtn" style="color: var(--danger-red); border-color: rgba(230, 57, 70, 0.4);">LOGOUT</button>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- DASHBOARD / FRONT PAGE VIEW -->
+        <!-- ========================================== -->
+        <div id="frontPageView">
+            
+            <!-- SYNC & COUNTDOWN BAR -->
+            <div class="office-card" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono);">Monetization Target Launch</span>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                        <input type="date" id="targetLaunchDate" onchange="updateLaunchCountdown()" style="margin-bottom: 0; width: auto;">
+                        <span id="countdownDisplay" style="color: var(--red-primary); font-weight: 800;">Set target date</span>
+                    </div>
+                </div>
+                <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono);">Squad Momentum Streaks</span>
+                    <div style="font-weight: 800; margin-top: 4px;">
+                        Reacher: <span id="streakUser1" style="color: var(--cyan-accent);">0</span> Days | 
+                        Redox: <span id="streakUser2" style="color: var(--cyan-accent);">0</span> Days
+                        <button onclick="logTodayStreak()" style="margin-left: 10px; padding: 0.3rem 0.6rem; font-size: 0.75rem;">Log Streak</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GLOBAL DATE SEARCH FILTER -->
+            <div class="office-card" style="margin-bottom: 1.5rem;">
+                <h3><i class="fa-solid fa-magnifying-glass"></i> Global Log Search by Date</h3>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <input type="date" id="globalDateFilter" onchange="filterGlobalLogsByDate()" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+                    <button onclick="resetGlobalDateFilter()" class="action-btn">Clear Filter</button>
+                </div>
+                <div id="globalSearchResults" style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    <em>Select a date above to inspect work logs, descriptions, and file attachments across all divisions.</em>
+                </div>
+            </div>
+
+            <!-- DAILY REPORT & TRACKER -->
+            <div class="office-card" style="margin-bottom: 1.5rem;">
+                <h3><i class="fa-solid fa-clipboard-check"></i> Daily Report & Hour Tracker</h3>
+                <form id="dailyReportForm">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Report Date:</label>
+                            <input type="date" id="dailyReportDate" required>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border-color);">
+                        <div>
+                            <label><input type="checkbox" id="chkDailyDSA"> Code</label>
+                            <input type="number" id="hoursDSA" min="0" step="0.5" placeholder="Hours" style="margin-top: 5px;">
+                        </div>
+                        <div>
+                            <label><input type="checkbox" id="chkDailyFullstack"> Full Stack Progress</label>
+                            <input type="number" id="hoursFullstack" min="0" step="0.5" placeholder="Hours" style="margin-top: 5px;">
+                        </div>
+                        <div>
+                            <label><input type="checkbox" id="chkDailyMaths"> Maths Unit Revised</label>
+                            <input type="number" id="hoursMaths" min="0" step="0.5" placeholder="Hours" style="margin-top: 5px;">
+                        </div>
+                    </div>
+
+                    <textarea id="dailyReportNotes" rows="3" placeholder="Summary of today's execution, blockers, and next objectives..." required></textarea>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Attach Summary File/Screenshot:</label>
+                            <input type="file" id="dailyReportFile" style="margin-bottom: 0;">
+                        </div>
+                        <button type="submit" class="btn-primary-glow" style="padding: 0.7rem 1.5rem;">Submit Daily Report ↗</button>
+                    </div>
+                </form>
+
+                <h4 style="margin-top: 1.5rem; color: var(--cyan-accent); font-family: var(--font-mono); font-size: 0.9rem;">Recent Daily Reports Feed</h4>
+                <div id="dailyReportsList" style="margin-top: 0.8rem; max-height: 250px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- SHARED QUICK SCRATCHPAD -->
+            <div class="office-card" style="margin-bottom: 1.5rem;">
+                <h3><i class="fa-solid fa-pen-nib"></i> Shared Quick Scratchpad</h3>
+                <textarea id="sharedScratchpad" rows="4" placeholder="Drop quick snippets, client notes, or ideas here..."></textarea>
+                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                    <span id="scratchpadStatus" style="color: var(--success-green); font-size: 0.85rem;"></span>
+                    <button onclick="saveScratchpad()" class="action-btn">Save Scratchpad</button>
+                </div>
+            </div>
+
+            <!-- WORKSPACE DIVISIONS NAVIGATION CARDS -->
+            <div class="office-card" style="margin-bottom: 1.5rem;">
+                <h3><i class="fa-solid fa-folder-tree"></i> Workspace Divisions</h3>
+                <div class="dashboard-grid" style="margin-top: 1rem;">
+                    <div class="nav-station-card">
+                        <h4>1. DSA ENGINE</h4>
+                        <p>LeetCode & GFG difficulty split, counters, dated logs, and solution files.</p>
+                        <button onclick="navigateTo('dsaView')" class="action-btn" style="margin-top: auto;">Open DSA Hub ↗</button>
+                    </div>
+                    <div class="nav-station-card">
+                        <h4>2. PROJECTS INCUBATOR</h4>
+                        <p>Explicit Pending vs Done sections, client specs, assignments, and Vercel hooks.</p>
+                        <button onclick="navigateTo('projectsView')" class="action-btn" style="margin-top: auto;">Open Projects ↗</button>
+                    </div>
+                    <div class="nav-station-card">
+                        <h4>3. FULL STACK MONETIZATION</h4>
+                        <p>HTML/CSS/JS progress bars, description files, sprint task board, and client checklist.</p>
+                        <button onclick="navigateTo('fullstackView')" class="action-btn" style="margin-top: auto;">Open Full Stack ↗</button>
+                    </div>
+                    <div class="nav-station-card">
+                        <h4>4. MATHS HUB</h4>
+                        <p>Syllabus tracking, exam countdowns, PDF notes vault with code hooks, and revision logs.</p>
+                        <button onclick="navigateTo('mathsView')" class="action-btn" style="margin-top: auto;">Open Maths Hub ↗</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEETCODE FOCUS TIMER ENGINE -->
+            <div class="office-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3><i class="fa-solid fa-stopwatch"></i> LeetCode & Coding Focus Engine</h3>
+                    <span style="font-size: 0.75rem; padding: 0.3rem 0.8rem; border-radius: 20px; background: rgba(0, 240, 255, 0.1); color: var(--cyan-accent); border: 1px solid rgba(0, 240, 255, 0.3); font-weight: 800;" id="session-status">STANDBY</span>
+                </div>
+
+                <div class="timer-row">
+                    <div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono);">Focus Stopwatch</div>
+                        <div class="timer-display" id="leetcode-timer">00:00:00</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono);">Momentum Score</div>
+                        <div style="font-size: 1.6rem; font-weight: 900; color: var(--red-primary);" id="momentum-score">0 PTS</div>
+                    </div>
+                </div>
+
+                <div class="graph-container">
+                    <canvas id="liveGraph"></canvas>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-primary-glow" id="toggle-btn">Start Session</button>
+                    <a href="https://leetcode.com/problemset/all/" target="_blank" class="btn-primary-glow btn-secondary-glow" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Launch LeetCode ↗</a>
+                </div>
+            </div>
+
+            <!-- QUICK LINKS DOCK -->
+            <div class="office-card" style="margin-top: 1.5rem;">
+                <div style="font-size: 0.9rem; font-weight: 900; color: var(--red-primary); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 0.8rem; font-family: var(--font-mono);">
+                    <span class="status-dot" style="display: inline-block; margin-right: 6px;"></span> External Work Sites
+                </div>
+                <div class="links-grid">
+                    <a href="https://google.com" target="_blank" class="link-btn">Google</a>
+                    <a href="https://gemini.google.com" target="_blank" class="link-btn">Gemini AI</a>
+                    <a href="https://chatgpt.com" target="_blank" class="link-btn">ChatGPT</a>
+                    <a href="https://youtube.com" target="_blank" class="link-btn">YouTube</a>
+                    <a href="https://github.com" target="_blank" class="link-btn">GitHub</a>
+                    <a href="https://web.whatsapp.com" target="_blank" class="link-btn">WhatsApp</a>
+                    <a href="https://mail.google.com" target="_blank" class="link-btn">Gmail</a>
+                    <a href="https://leetcode.com" target="_blank" class="link-btn">LeetCode</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 1. DEDICATED DSA PAGE -->
+        <!-- ========================================== -->
+        <div id="dsaView" class="office-card" style="display: none;">
+            <button onclick="navigateTo('frontPageView')" class="back-nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+            <h2>DSA CONTROL CENTER</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">Target Batch Completion Date:</label>
+                    <input type="date" id="dsaTargetDate" onchange="saveDSAPlan()">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <textarea id="dsaPlanNotes" rows="2" placeholder="Planning notes (e.g. Sliding Window & Hash Map Mastery)..." onchange="saveDSAPlan()"></textarea>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1rem; color: var(--cyan-accent);">Solved Analytics Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Easy</th>
+                        <th>Medium</th>
+                        <th>Hard</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LeetCode</td>
+                        <td id="lcEasyCount">0</td>
+                        <td id="lcMediumCount">0</td>
+                        <td id="lcHardCount">0</td>
+                        <td id="lcTotalCount">0</td>
+                    </tr>
+                    <tr>
+                        <td>GeeksforGeeks</td>
+                        <td id="gfgEasyCount">0</td>
+                        <td id="gfgMediumCount">0</td>
+                        <td id="gfgHardCount">0</td>
+                        <td id="gfgTotalCount">0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h3>Add Solved Problem Log</h3>
+            <form id="dsaAddForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                    <select id="dsaPlatform">
+                        <option value="LeetCode">LeetCode</option>
+                        <option value="GFG">GeeksforGeeks</option>
+                    </select>
+                    <input type="text" id="dsaProbTitle" placeholder="Problem Title / ID" required>
+                    <select id="dsaDifficulty">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                    <input type="number" id="dsaTimeTaken" placeholder="Time (mins)">
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Attach Code/Screenshot File:</label>
+                        <input type="file" id="dsaFileAttachment" style="margin-bottom: 0;">
+                    </div>
+                    <button type="submit" class="btn-primary-glow" style="padding: 0.7rem 1.5rem;">Add Problem Log ↗</button>
+                </div>
+            </form>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Filter by Date:</label>
+                <input type="date" id="dsaDateFilter" onchange="renderDSA()" style="margin-bottom: 0; width: auto;">
+                <button onclick="document.getElementById('dsaDateFilter').value=''; renderDSA();" class="action-btn">Clear Filter</button>
+            </div>
+
+            <h4 style="margin-top: 1rem; color: var(--cyan-accent); font-family: var(--font-mono); font-size: 0.9rem;">Problem Checklist Log</h4>
+            <ul id="dsaProblemList" style="margin-top: 0.5rem; max-height: 300px; overflow-y: auto;"></ul>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. DEDICATED PROJECTS PAGE -->
+        <!-- ========================================== -->
+        <div id="projectsView" class="office-card" style="display: none;">
+            <button onclick="navigateTo('frontPageView')" class="back-nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+            <h2>PROJECTS INCUBATOR & CLIENT PIPELINE</h2>
+
+            <h3>Add New Project Idea / Pitch</h3>
+            <form id="projectAddForm">
+                <input type="text" id="projTitleInput" placeholder="Project Title" required>
+                <textarea id="projDescInput" rows="2" placeholder="Project Description & Features..." required></textarea>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Category:</label>
+                        <select id="projCategory">
+                            <option value="Practice">Practice</option>
+                            <option value="Portfolio">Portfolio</option>
+                            <option value="Client Pitch">Client Pitch</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Initial Status:</label>
+                        <select id="projStatus">
+                            <option value="Pending">Pending</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Assigned To:</label>
+                        <select id="projAssignee">
+                            <option value="Reacher">Reacher</option>
+                            <option value="Redox">Redox</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Start Date:</label>
+                        <input type="date" id="projStartDate">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Target Launch Date:</label>
+                        <input type="date" id="projTargetDate">
+                    </div>
+                </div>
+                <input type="url" id="projRepoUrl" placeholder="GitHub Repository URL" style="margin-top: 0.5rem;">
+                <input type="url" id="projLiveUrl" placeholder="Vercel/Live Deployment URL">
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 0.5rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Attach Spec/Document File:</label>
+                        <input type="file" id="projFileAttachment" style="margin-bottom: 0;">
+                    </div>
+                    <button type="submit" class="btn-primary-glow" style="padding: 0.7rem 1.5rem;">Save Project ↗</button>
+                </div>
+            </form>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Filter Projects by Date:</label>
+                <input type="date" id="projectsDateFilter" onchange="renderProjects()" style="margin-bottom: 0; width: auto;">
+                <button onclick="document.getElementById('projectsDateFilter').value=''; renderProjects();" class="action-btn">Clear Filter</button>
+            </div>
+
+            <hr>
+
+            <h3 style="color: var(--red-primary);">PENDING PROJECTS</h3>
+            <div id="pendingProjectsGrid" class="dashboard-grid" style="margin-top: 1rem;"></div>
+
+            <hr style="margin: 2rem 0;">
+
+            <h3 style="color: var(--success-green);">PROJECTS DONE</h3>
+            <div id="doneProjectsGrid" class="dashboard-grid" style="margin-top: 1rem;"></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 3. DEDICATED FULL STACK PAGE -->
+        <!-- ========================================== -->
+        <div id="fullstackView" class="office-card" style="display: none;">
+            <button onclick="navigateTo('frontPageView')" class="back-nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+            <h2>FULL STACK MONETIZATION ENGINE</h2>
+
+            <h3>Core Stack Mastery & Subsection Files</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div class="nav-station-card">
+                    <h4>HTML Mastery: <span id="htmlVal" style="color: var(--cyan-accent);">0%</span></h4>
+                    <input type="range" id="htmlProg" min="0" max="100" value="0" onchange="saveFullstackProgress()">
+                    <textarea id="htmlDesc" rows="2" placeholder="HTML Progress Description..." onchange="saveFullstackProgress()"></textarea>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Attach HTML File:</label>
+                    <input type="file" id="htmlFile" onchange="handleFullstackFile(event, 'html')" style="margin-bottom: 0;">
+                    <span id="htmlFileStatus" style="font-size: 0.75rem; color: var(--success-green);"></span>
+                </div>
+                <div class="nav-station-card">
+                    <h4>CSS Mastery: <span id="cssVal" style="color: var(--cyan-accent);">0%</span></h4>
+                    <input type="range" id="cssProg" min="0" max="100" value="0" onchange="saveFullstackProgress()">
+                    <textarea id="cssDesc" rows="2" placeholder="CSS Progress Description..." onchange="saveFullstackProgress()"></textarea>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Attach CSS File:</label>
+                    <input type="file" id="cssFile" onchange="handleFullstackFile(event, 'css')" style="margin-bottom: 0;">
+                    <span id="cssFileStatus" style="font-size: 0.75rem; color: var(--success-green);"></span>
+                </div>
+                <div class="nav-station-card">
+                    <h4>JavaScript Mastery: <span id="jsVal" style="color: var(--cyan-accent);">0%</span></h4>
+                    <input type="range" id="jsProg" min="0" max="100" value="0" onchange="saveFullstackProgress()">
+                    <textarea id="jsDesc" rows="2" placeholder="JavaScript Progress Description..." onchange="saveFullstackProgress()"></textarea>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Attach JS File:</label>
+                    <input type="file" id="jsFile" onchange="handleFullstackFile(event, 'js')" style="margin-bottom: 0;">
+                    <span id="jsFileStatus" style="font-size: 0.75rem; color: var(--success-green);"></span>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Shared Sprint Board & Tasks</h3>
+            <form id="sprintTaskForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <input type="text" id="sprintTaskTitle" placeholder="Task Description" required style="margin-bottom: 0;">
+                    <select id="sprintTaskAssignee">
+                        <option value="Reacher">Reacher</option>
+                        <option value="Redox">Redox</option>
+                    </select>
+                    <select id="sprintTaskStatus">
+                        <option value="To Do">To Do</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Client-Ready">Client-Ready</option>
+                    </select>
+                    <input type="date" id="sprintTaskDeadline" style="margin-bottom: 0;">
+                </div>
+                <button type="submit" class="btn-primary-glow" style="margin-top: 1rem; width: 100%;">Add Sprint Task ↗</button>
+            </form>
+
+            <h4 style="margin-top: 1.5rem; color: var(--cyan-accent); font-family: var(--font-mono); font-size: 0.9rem;">Active Sprint Items</h4>
+            <ul id="sprintTaskList" style="margin-top: 0.5rem; max-height: 250px; overflow-y: auto;"></ul>
+
+            <hr>
+
+            <h3>Client-Ready Skill Checklist</h3>
+            <div id="clientChecklist" style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <label style="display: block; margin-bottom: 8px;"><input type="checkbox" onchange="saveChecklist()" id="chk1"> Responsive Mobile Layouts & Flex/Grid</label>
+                <label style="display: block; margin-bottom: 8px;"><input type="checkbox" onchange="saveChecklist()" id="chk2"> Form Inputs & Strict Validation</label>
+                <label style="display: block; margin-bottom: 8px;"><input type="checkbox" onchange="saveChecklist()" id="chk3"> DOM Manipulation & Dynamic UI Components</label>
+                <label style="display: block; margin-bottom: 8px;"><input type="checkbox" onchange="saveChecklist()" id="chk4"> LocalStorage & State Management</label>
+                <label style="display: block; margin-bottom: 8px;"><input type="checkbox" onchange="saveChecklist()" id="chk5"> Fetching External APIs & JSON Handlers</label>
+                <label style="display: block;"><input type="checkbox" onchange="saveChecklist()" id="chk6"> Vercel / GitHub Production Deployment</label>
+            </div>
+
+            <hr>
+
+            <h3>Progress Report Log Feed</h3>
+            <textarea id="newReportText" rows="3" placeholder="Write full stack progress report..."></textarea>
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">Attach File/Snippet:</label>
+                    <input type="file" id="reportFileAttachment" style="margin-bottom: 0;">
+                </div>
+                <button onclick="addProgressReport()" class="btn-primary-glow" style="padding: 0.7rem 1.5rem;">Post Report ↗</button>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Filter Reports by Date:</label>
+                <input type="date" id="fsReportDateFilter" onchange="renderReports()" style="margin-bottom: 0; width: auto;">
+                <button onclick="document.getElementById('fsReportDateFilter').value=''; renderReports();" class="action-btn">Clear Filter</button>
+            </div>
+
+            <div id="reportsFeed" style="margin-top: 1rem; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 4. DEDICATED MATHS PAGE -->
+        <!-- ========================================== -->
+        <div id="mathsView" class="office-card" style="display: none;">
+            <button onclick="navigateTo('frontPageView')" class="back-nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+            <h2>MATHS HUB & EXAM VAULT</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">Next Exam / Target Date:</label>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                        <input type="date" id="mathsExamDate" onchange="saveMathsTimelines()" style="margin-bottom: 0;">
+                        <span id="mathsExamCountdown" style="color: var(--cyan-accent); font-weight: 800;"></span>
+                    </div>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <textarea id="mathsSyllabusNotes" rows="2" placeholder="Syllabus units and coverage goals..." onchange="saveMathsTimelines()"></textarea>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>PDF Notes Vault (Code Hooks Ready)</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Click buttons below to open local PDF files directly in your browser or viewer:</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button onclick="openPdf('unit1_calculus.pdf')" class="action-btn">Open Unit 1: Calculus PDF ↗</button>
+                <button onclick="openPdf('unit2_linear_algebra.pdf')" class="action-btn">Open Unit 2: Linear Algebra PDF ↗</button>
+                <button onclick="openPdf('unit3_differential.pdf')" class="action-btn">Open Unit 3: Differential Equations PDF ↗</button>
+            </div>
+
+            <hr>
+
+            <h3>Shared Revision Log</h3>
+            <form id="mathsRevisionForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <input type="text" id="mathsUnitTitle" placeholder="Unit / Topic Revised" required style="margin-bottom: 0;">
+                    <input type="date" id="mathsRevDate" required style="margin-bottom: 0;">
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Attach PDF/Notes File:</label>
+                        <input type="file" id="mathsRevFile" style="margin-bottom: 0;">
+                    </div>
+                    <button type="submit" class="btn-primary-glow" style="padding: 0.7rem 1.5rem;">Log Revision ↗</button>
+                </div>
+            </form>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Filter Revisions by Date:</label>
+                <input type="date" id="mathsDateFilter" onchange="renderRevisions()" style="margin-bottom: 0; width: auto;">
+                <button onclick="document.getElementById('mathsDateFilter').value=''; renderRevisions();" class="action-btn">Clear Filter</button>
+            </div>
+
+            <ul id="mathsRevisionList" style="margin-top: 1rem; max-height: 250px; overflow-y: auto;"></ul>
+        </div>
+
+    </div>
+
+    <!-- FLOATING TELEGRAM ACTION BUTTON -->
+    <a href="htps://t.me/Reacher" class="telegram-float" target="_blank" rel="noopener noreferrer" aria-label="Open Telegram">
+        <i class="fab fa-telegram-plane"></i>
+    </a>
+
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        const USERS = {
+            "reacher": "reacher123",
+            "redox": "redox123"
+        };
+
+        let currentUser = null;
+
+        let appData = {
+            scratchpad: "",
+            targetLaunchDate: "",
+            streaks: { reacher: 0, redox: 0, lastLoggedReacher: "", lastLoggedRedox: "" },
+            dailyReports: [],
+            dsa: { targetDate: "", notes: "", problems: [] },
+            projects: [],
+            fullstack: { 
+                html: 0, htmlDesc: "", htmlFile: "",
+                css: 0, cssDesc: "", cssFile: "",
+                js: 0, jsDesc: "", jsFile: "",
+                tasks: [], checklist: {}, reports: [] 
+            },
+            maths: { examDate: "", syllabus: "", revisions: [] }
+        };
+
+        window.onload = function() {
+            loadFromStorage();
+            
+            const savedUser = localStorage.getItem('officeActiveUser');
+            if (savedUser && USERS[savedUser]) {
+                currentUser = savedUser;
+                document.getElementById('currentUserDisplay').innerText = currentUser.toUpperCase();
+                document.getElementById('loginView').style.display = 'none';
+                document.getElementById('officeApp').style.display = 'block';
+                renderAllData();
+            }
+
+            setupEventListeners();
+            setTimeout(resizeCanvas, 150);
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('usernameInput').value.trim().toLowerCase();
+            const p = document.getElementById('passwordInput').value.trim();
+
+            if (USERS[u] && USERS[u] === p) {
+                currentUser = u;
+                localStorage.setItem('officeActiveUser', currentUser);
+                document.getElementById('currentUserDisplay').innerText = currentUser.toUpperCase();
+                document.getElementById('loginView').style.display = 'none';
+                document.getElementById('officeApp').style.display = 'block';
+                document.getElementById('loginError').style.display = 'none';
+                renderAllData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            currentUser = null;
+            localStorage.removeItem('officeActiveUser');
+            document.getElementById('officeApp').style.display = 'none';
+            document.getElementById('loginView').style.display = 'block';
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+        });
+
+        function navigateTo(viewId) {
+            const views = ['frontPageView', 'dsaView', 'projectsView', 'fullstackView', 'mathsView'];
+            views.forEach(v => {
+                document.getElementById(v).style.display = (v === viewId) ? 'block' : 'none';
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('officeWorkspaceData', JSON.stringify(appData));
+        }
+
+        function loadFromStorage() {
+            const stored = localStorage.getItem('officeWorkspaceData');
+            if (stored) {
+                appData = JSON.parse(stored);
+            }
+        }
+
+        function renderAllData() {
+            document.getElementById('sharedScratchpad').value = appData.scratchpad || "";
+            document.getElementById('targetLaunchDate').value = appData.targetLaunchDate || "";
+            updateLaunchCountdown();
+            updateStreakDisplay();
+            renderDailyReports();
+
+            document.getElementById('dsaTargetDate').value = appData.dsa.targetDate || "";
+            document.getElementById('dsaPlanNotes').value = appData.dsa.notes || "";
+            renderDSA();
+
+            renderProjects();
+
+            document.getElementById('htmlProg').value = appData.fullstack.html || 0;
+            document.getElementById('htmlDesc').value = appData.fullstack.htmlDesc || "";
+            document.getElementById('htmlFileStatus').innerText = appData.fullstack.htmlFile ? ` (Attached: ${appData.fullstack.htmlFile})` : "";
+            
+            document.getElementById('cssProg').value = appData.fullstack.css || 0;
+            document.getElementById('cssDesc').value = appData.fullstack.cssDesc || "";
+            document.getElementById('cssFileStatus').innerText = appData.fullstack.cssFile ? ` (Attached: ${appData.fullstack.cssFile})` : "";
+
+            document.getElementById('jsProg').value = appData.fullstack.js || 0;
+            document.getElementById('jsDesc').value = appData.fullstack.jsDesc || "";
+            document.getElementById('jsFileStatus').innerText = appData.fullstack.jsFile ? ` (Attached: ${appData.fullstack.jsFile})` : "";
+
+            updateRangeDisplays();
+            renderSprintTasks();
+            renderChecklist();
+            renderReports();
+
+            document.getElementById('mathsExamDate').value = appData.maths.examDate || "";
+            document.getElementById('mathsSyllabusNotes').value = appData.maths.syllabus || "";
+            updateMathsCountdown();
+            renderRevisions();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('dailyReportForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('dailyReportFile');
+                const report = {
+                    id: Date.now(),
+                    date: document.getElementById('dailyReportDate').value,
+                    user: currentUser,
+                    dsa: document.getElementById('chkDailyDSA').checked,
+                    dsaHours: document.getElementById('hoursDSA').value || 0,
+                    fullstack: document.getElementById('chkDailyFullstack').checked,
+                    fullstackHours: document.getElementById('hoursFullstack').value || 0,
+                    maths: document.getElementById('chkDailyMaths').checked,
+                    mathsHours: document.getElementById('hoursMaths').value || 0,
+                    notes: document.getElementById('dailyReportNotes').value,
+                    fileName: fileInput.files[0] ? fileInput.files[0].name : ''
+                };
+                if (!appData.dailyReports) appData.dailyReports = [];
+                appData.dailyReports.unshift(report);
+                saveToStorage();
+                renderDailyReports();
+                this.reset();
+            });
+
+            document.getElementById('dsaAddForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('dsaFileAttachment');
+                const today = new Date().toISOString().split('T')[0];
+                const prob = {
+                    id: Date.now(),
+                    platform: document.getElementById('dsaPlatform').value,
+                    title: document.getElementById('dsaProbTitle').value,
+                    difficulty: document.getElementById('dsaDifficulty').value,
+                    time: document.getElementById('dsaTimeTaken').value || 'N/A',
+                    fileName: fileInput.files[0] ? fileInput.files[0].name : '',
+                    solvedBy: currentUser,
+                    date: today
+                };
+                appData.dsa.problems.push(prob);
+                saveToStorage();
+                renderDSA();
+                this.reset();
+            });
+
+            document.getElementById('projectAddForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('projFileAttachment');
+                const proj = {
+                    id: Date.now(),
+                    title: document.getElementById('projTitleInput').value,
+                    desc: document.getElementById('projDescInput').value,
+                    category: document.getElementById('projCategory').value,
+                    status: document.getElementById('projStatus').value,
+                    assignee: document.getElementById('projAssignee').value,
+                    startDate: document.getElementById('projStartDate').value,
+                    targetDate: document.getElementById('projTargetDate').value,
+                    repoUrl: document.getElementById('projRepoUrl').value,
+                    liveUrl: document.getElementById('projLiveUrl').value,
+                    fileName: fileInput.files[0] ? fileInput.files[0].name : '',
+                    createdBy: currentUser
+                };
+                appData.projects.push(proj);
+                saveToStorage();
+                renderProjects();
+                this.reset();
+            });
+
+            document.getElementById('sprintTaskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const task = {
+                    id: Date.now(),
+                    desc: document.getElementById('sprintTaskTitle').value,
+                    assignee: document.getElementById('sprintTaskAssignee').value,
+                    status: document.getElementById('sprintTaskStatus').value,
+                    deadline: document.getElementById('sprintTaskDeadline').value
+                };
+                appData.fullstack.tasks.push(task);
+                saveToStorage();
+                renderSprintTasks();
+                this.reset();
+            });
+
+            document.getElementById('mathsRevisionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('mathsRevFile');
+                const rev = {
+                    id: Date.now(),
+                    title: document.getElementById('mathsUnitTitle').value,
+                    date: document.getElementById('mathsRevDate').value,
+                    fileName: fileInput.files[0] ? fileInput.files[0].name : '',
+                    user: currentUser
+                };
+                appData.maths.revisions.push(rev);
+                saveToStorage();
+                renderRevisions();
+                this.reset();
+            });
+        }
+
+        function saveScratchpad() {
+            appData.scratchpad = document.getElementById('sharedScratchpad').value;
+            saveToStorage();
+            document.getElementById('scratchpadStatus').innerText = "Saved successfully!";
+            setTimeout(() => document.getElementById('scratchpadStatus').innerText = "", 2000);
+        }
+
+        function updateLaunchCountdown() {
+            const val = document.getElementById('targetLaunchDate').value;
+            appData.targetLaunchDate = val;
+            saveToStorage();
+            if (!val) return;
+            const target = new Date(val);
+            const now = new Date();
+            const diffTime = target - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('countdownDisplay').innerText = (diffDays >= 0) ? `${diffDays} Days Remaining` : 'Target Passed';
+        }
+
+        function logTodayStreak() {
+            const today = new Date().toISOString().split('T')[0];
+            const key = currentUser === 'reacher' ? 'lastLoggedReacher' : 'lastLoggedRedox';
+            const streakKey = currentUser === 'reacher' ? 'reacher' : 'redox';
+
+            if (appData.streaks[key] !== today) {
+                appData.streaks[streakKey] += 1;
+                appData.streaks[key] = today;
+                saveToStorage();
+                updateStreakDisplay();
+                alert(`Streak logged successfully for ${currentUser.toUpperCase()}!`);
+            } else {
+                alert("Streak already logged for today!");
+            }
+        }
+
+        function updateStreakDisplay() {
+            document.getElementById('streakUser1').innerText = appData.streaks.reacher || 0;
+            document.getElementById('streakUser2').innerText = appData.streaks.redox || 0;
+        }
+
+        function renderDailyReports() {
+            const container = document.getElementById('dailyReportsList');
+            container.innerHTML = '';
+            if (!appData.dailyReports || appData.dailyReports.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No daily reports logged yet.</p>';
+                return;
+            }
+
+            appData.dailyReports.forEach(r => {
+                const card = document.createElement('div');
+                card.style.borderBottom = '1px solid rgba(255, 42, 75, 0.15)';
+                card.style.padding = '10px 0';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--red-primary); font-family: var(--font-mono);">
+                        <span>DATE: ${r.date}</span>
+                        <span>BY: ${r.user.toUpperCase()}</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--cyan-accent); margin: 4px 0;">
+                        Activity Hours: ${r.dsa ? `[DSA: ${r.dsaHours}h] ` : ''}${r.fullstack ? `[Full Stack: ${r.fullstackHours}h] ` : ''}${r.maths ? `[Maths: ${r.mathsHours}h]` : ''}
+                    </div>
+                    <p style="font-size: 0.9rem; margin: 4px 0;">${r.notes}</p>
+                    ${r.fileName ? `<small style="color: var(--success-green);"><i class="fa-solid fa-paperclip"></i> Attached File: ${r.fileName}</small>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterGlobalLogsByDate() {
+            const selectedDate = document.getElementById('globalDateFilter').value;
+            const out = document.getElementById('globalSearchResults');
+            if (!selectedDate) {
+                out.innerHTML = `<p style="color: var(--text-muted);"><em>Select a date above to filter logs across DSA, Projects, Full Stack, and Daily Reports.</em></p>`;
+                return;
+            }
+
+            let html = `<h4 style="color: var(--red-primary); margin-bottom: 8px;">Search Results for Date: ${selectedDate}</h4>`;
+
+            const reports = (appData.dailyReports || []).filter(r => r.date === selectedDate);
+            html += `<strong style="color: var(--cyan-accent);">Daily Reports (${reports.length}):</strong><ul style="margin-bottom: 10px;">`;
+            if (reports.length === 0) html += `<li><em>No daily reports</em></li>`;
+            reports.forEach(r => html += `<li><strong>${r.user.toUpperCase()}</strong>: ${r.notes} ${r.fileName ? '(File: ' + r.fileName + ')' : ''}</li>`);
+            html += `</ul>`;
+
+            const dsaProbs = appData.dsa.problems.filter(p => p.date === selectedDate);
+            html += `<strong style="color: var(--cyan-accent);">DSA Problems Solved (${dsaProbs.length}):</strong><ul style="margin-bottom: 10px;">`;
+            if (dsaProbs.length === 0) html += `<li><em>No DSA solved</em></li>`;
+            dsaProbs.forEach(p => html += `<li>[${p.platform}] <strong>${p.title}</strong> (${p.difficulty}) by ${p.solvedBy.toUpperCase()} ${p.fileName ? '(File: ' + p.fileName + ')' : ''}</li>`);
+            html += `</ul>`;
+
+            const projs = appData.projects.filter(p => p.startDate === selectedDate || p.targetDate === selectedDate);
+            html += `<strong style="color: var(--cyan-accent);">Projects (Start/Target Date) (${projs.length}):</strong><ul style="margin-bottom: 10px;">`;
+            if (projs.length === 0) html += `<li><em>No projects scheduled</em></li>`;
+            projs.forEach(p => html += `<li>[${p.status}] <strong>${p.title}</strong> - ${p.desc} ${p.fileName ? '(File: ' + p.fileName + ')' : ''}</li>`);
+            html += `</ul>`;
+
+            const fsReps = appData.fullstack.reports.filter(r => r.date.startsWith(selectedDate));
+            html += `<strong style="color: var(--cyan-accent);">Full Stack Logs (${fsReps.length}):</strong><ul>`;
+            if (fsReps.length === 0) html += `<li><em>No Full Stack logs</em></li>`;
+            fsReps.forEach(r => html += `<li><strong>${r.user.toUpperCase()}</strong>: ${r.text} ${r.fileName ? '(File: ' + r.fileName + ')' : ''}</li>`);
+            html += `</ul>`;
+
+            out.innerHTML = html;
+        }
+
+        function resetGlobalDateFilter() {
+            document.getElementById('globalDateFilter').value = '';
+            document.getElementById('globalSearchResults').innerHTML = `<p style="color: var(--text-muted);"><em>Select a date above to filter logs across DSA, Projects, Full Stack, and Daily Reports.</em></p>`;
+        }
+
+        function saveDSAPlan() {
+            appData.dsa.targetDate = document.getElementById('dsaTargetDate').value;
+            appData.dsa.notes = document.getElementById('dsaPlanNotes').value;
+            saveToStorage();
+        }
+
+        function renderDSA() {
+            let lcE = 0, lcM = 0, lcH = 0;
+            let gfgE = 0, gfgM = 0, gfgH = 0;
+
+            const filterDate = document.getElementById('dsaDateFilter').value;
+            const listEl = document.getElementById('dsaProblemList');
+            listEl.innerHTML = '';
+
+            appData.dsa.problems.forEach(p => {
+                if (p.platform === 'LeetCode') {
+                    if (p.difficulty === 'Easy') lcE++;
+                    if (p.difficulty === 'Medium') lcM++;
+                    if (p.difficulty === 'Hard') lcH++;
+                } else {
+                    if (p.difficulty === 'Easy') gfgE++;
+                    if (p.difficulty === 'Medium') gfgM++;
+                    if (p.difficulty === 'Hard') gfgH++;
+                }
+
+                if (!filterDate || p.date === filterDate) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `[${p.platform}] <strong>${p.title}</strong> (${p.difficulty}) - ${p.time} mins | Solved by ${p.solvedBy.toUpperCase()} on ${p.date} ${p.fileName ? '| File: ' + p.fileName : ''}`;
+                    listEl.appendChild(li);
+                }
+            });
+
+            document.getElementById('lcEasyCount').innerText = lcE;
+            document.getElementById('lcMediumCount').innerText = lcM;
+            document.getElementById('lcHardCount').innerText = lcH;
+            document.getElementById('lcTotalCount').innerText = lcE + lcM + lcH;
+
+            document.getElementById('gfgEasyCount').innerText = gfgE;
+            document.getElementById('gfgMediumCount').innerText = gfgM;
+            document.getElementById('gfgHardCount').innerText = gfgH;
+            document.getElementById('gfgTotalCount').innerText = gfgE + gfgM + gfgH;
+        }
+
+        function toggleProjectStatus(id) {
+            const p = appData.projects.find(x => x.id === id);
+            if (p) {
+                p.status = (p.status === 'Done') ? 'Pending' : 'Done';
+                saveToStorage();
+                renderProjects();
+            }
+        }
+
+        function renderProjects() {
+            const pendingGrid = document.getElementById('pendingProjectsGrid');
+            const doneGrid = document.getElementById('doneProjectsGrid');
+            const filterDate = document.getElementById('projectsDateFilter').value;
+
+            pendingGrid.innerHTML = '';
+            doneGrid.innerHTML = '';
+
+            let pendingCount = 0, doneCount = 0;
+
+            appData.projects.forEach(p => {
+                if (filterDate && p.startDate !== filterDate && p.targetDate !== filterDate) {
+                    return;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'nav-station-card';
+                card.innerHTML = `
+                    <h4 style="color: var(--red-primary);">${p.title} <span style="font-size: 0.75rem; color: var(--cyan-accent);">[${p.category}]</span></h4>
+                    <p>${p.desc}</p>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+                        Assignee: ${p.assignee} | Start: ${p.startDate || 'N/A'} | Target: ${p.targetDate || 'N/A'}<br>
+                        Links: <a href="${p.repoUrl || '#'}" target="_blank" style="color: var(--cyan-accent);">Repo</a> | <a href="${p.liveUrl || '#'}" target="_blank" style="color: var(--cyan-accent);">Live App</a>
+                        ${p.fileName ? `<br>File: ${p.fileName}` : ''}
+                    </div>
+                    <button onclick="toggleProjectStatus(${p.id})" class="action-btn" style="margin-top: 0.5rem;">Mark as ${p.status === 'Done' ? 'Pending' : 'Done'}</button>
+                `;
+
+                if (p.status === 'Done') {
+                    doneGrid.appendChild(card);
+                    doneCount++;
+                } else {
+                    pendingGrid.appendChild(card);
+                    pendingCount++;
+                }
+            });
+
+            if (pendingCount === 0) pendingGrid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No pending projects in pipeline.</p>';
+            if (doneCount === 0) doneGrid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No completed projects yet.</p>';
+        }
+
+        function saveFullstackProgress() {
+            appData.fullstack.html = document.getElementById('htmlProg').value;
+            appData.fullstack.htmlDesc = document.getElementById('htmlDesc').value;
+            appData.fullstack.css = document.getElementById('cssProg').value;
+            appData.fullstack.cssDesc = document.getElementById('cssDesc').value;
+            appData.fullstack.js = document.getElementById('jsProg').value;
+            appData.fullstack.jsDesc = document.getElementById('jsDesc').value;
+            updateRangeDisplays();
+            saveToStorage();
+        }
+
+        function handleFullstackFile(event, type) {
+            const file = event.target.files[0];
+            if (file) {
+                appData.fullstack[type + 'File'] = file.name;
+                document.getElementById(type + 'FileStatus').innerText = ` (Attached: ${file.name})`;
+                saveToStorage();
+            }
+        }
+
+        function updateRangeDisplays() {
+            document.getElementById('htmlVal').innerText = appData.fullstack.html + '%';
+            document.getElementById('cssVal').innerText = appData.fullstack.css + '%';
+            document.getElementById('jsVal').innerText = appData.fullstack.js + '%';
+        }
+
+        function renderSprintTasks() {
+            const list = document.getElementById('sprintTaskList');
+            list.innerHTML = '';
+            if (!appData.fullstack.tasks || appData.fullstack.tasks.length === 0) {
+                list.innerHTML = '<li><em>No active sprint tasks.</em></li>';
+                return;
+            }
+            appData.fullstack.tasks.forEach(t => {
+                const li = document.createElement('li');
+                li.innerHTML = `[<strong style="color: var(--red-primary);">${t.status}</strong>] ${t.desc} <span style="font-size: 0.8rem; color: var(--text-muted);">(Assignee: ${t.assignee}, Due: ${t.deadline || 'N/A'})</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        function saveChecklist() {
+            for (let i = 1; i <= 6; i++) {
+                appData.fullstack.checklist['chk' + i] = document.getElementById('chk' + i).checked;
+            }
+            saveToStorage();
+        }
+
+        function renderChecklist() {
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById('chk' + i).checked = !!appData.fullstack.checklist['chk' + i];
+            }
+        }
+
+        function addProgressReport() {
+            const txt = document.getElementById('newReportText').value.trim();
+            if (!txt) return;
+            const fileInput = document.getElementById('reportFileAttachment');
+            const today = new Date().toISOString().split('T')[0];
+            const report = {
+                id: Date.now(),
+                user: currentUser,
+                text: txt,
+                fileName: fileInput.files[0] ? fileInput.files[0].name : '',
+                date: today
+            };
+            appData.fullstack.reports.unshift(report);
+            saveToStorage();
+            renderReports();
+            document.getElementById('newReportText').value = '';
+            fileInput.value = '';
+        }
+
+        function renderReports() {
+            const feed = document.getElementById('reportsFeed');
+            const filterDate = document.getElementById('fsReportDateFilter').value;
+            feed.innerHTML = '';
+            let count = 0;
+            appData.fullstack.reports.forEach(r => {
+                if (!filterDate || r.date === filterDate) {
+                    const div = document.createElement('div');
+                    div.style.borderBottom = '1px dashed rgba(255, 42, 75, 0.15)';
+                    div.style.padding = '8px 0';
+                    div.innerHTML = `<strong style="color: var(--cyan-accent);">${r.user.toUpperCase()}</strong> (${r.date}): <p style="font-size: 0.9rem; margin-top: 2px;">${r.text}</p> ${r.fileName ? '<small style="color: var(--success-green);"><i class="fa-solid fa-paperclip"></i> File: ' + r.fileName + '</small>' : ''}`;
+                    feed.appendChild(div);
+                    count++;
+                }
+            });
+            if (count === 0) feed.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No full stack progress reports found.</p>';
+        }
+
+        function saveMathsTimelines() {
+            appData.maths.examDate = document.getElementById('mathsExamDate').value;
+            appData.maths.syllabus = document.getElementById('mathsSyllabusNotes').value;
+            saveToStorage();
+            updateMathsCountdown();
+        }
+
+        function updateMathsCountdown() {
+            const val = appData.maths.examDate;
+            if (!val) {
+                document.getElementById('mathsExamCountdown').innerText = '';
+                return;
+            }
+            const target = new Date(val);
+            const now = new Date();
+            const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+            document.getElementById('mathsExamCountdown').innerText = (diffDays >= 0) ? `(${diffDays} days to exam)` : '(Exam passed)';
+        }
+
+        function openPdf(pdfFilename) {
+            window.open(pdfFilename, '_blank');
+        }
+
+        function renderRevisions() {
+            const list = document.getElementById('mathsRevisionList');
+            const filterDate = document.getElementById('mathsDateFilter').value;
+            list.innerHTML = '';
+            let count = 0;
+            appData.maths.revisions.forEach(r => {
+                if (!filterDate || r.date === filterDate) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${r.title}</strong> - Revised by <span style="color: var(--cyan-accent);">${r.user.toUpperCase()}</span> on ${r.date} ${r.fileName ? '| File: ' + r.fileName : ''}`;
+                    list.appendChild(li);
+                    count++;
+                }
+            });
+            if (count === 0) list.innerHTML = '<li><em>No revisions logged.</em></li>';
+        }
+
+        // --- REAL-TIME TIMER & CANVAS GRAPH ENGINE ---
+        let secondsSpent = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let graphData = [20, 28, 24, 35, 48, 42, 60, 68, 62, 80, 88];
+
+        const timerDisplay = document.getElementById('leetcode-timer');
+        const statusBadge = document.getElementById('session-status');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const momentumDisplay = document.getElementById('momentum-score');
+        const canvas = document.getElementById('liveGraph');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+            canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+            drawGraph();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function formatTime(totalSec) {
+            const hrs = Math.floor(totalSec / 3600).toString().padStart(2, '0');
+            const mins = Math.floor((totalSec % 3600) / 60).toString().padStart(2, '0');
+            const secs = (totalSec % 60).toString().padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                if (!isRunning) {
+                    isRunning = true;
+                    statusBadge.innerText = "ACTIVE FOCUS";
+                    statusBadge.style.color = "#00f0ff";
+                    statusBadge.style.borderColor = "#00f0ff";
+                    toggleBtn.innerText = "Pause Session";
+                    toggleBtn.style.background = "linear-gradient(135deg, #e63946 0%, #900c3f 100%)";
+
+                    timerInterval = setInterval(() => {
+                        secondsSpent++;
+                        timerDisplay.innerText = formatTime(secondsSpent);
+                        momentumDisplay.innerText = `${Math.floor(secondsSpent * 2.5)} PTS`;
+
+                        const lastVal = graphData[graphData.length - 1];
+                        const change = Math.floor(Math.random() * 12) - 3; 
+                        let newVal = Math.max(10, Math.min(100, lastVal + change));
+                        graphData.push(newVal);
+
+                        if (graphData.length > 30) graphData.shift();
+                        drawGraph();
+                    }, 1000);
+
+                } else {
+                    isRunning = false;
+                    statusBadge.innerText = "PAUSED";
+                    statusBadge.style.color = "#ff2a4b";
+                    statusBadge.style.borderColor = "rgba(255, 42, 75, 0.3)";
+                    toggleBtn.innerText = "Resume Session";
+                    toggleBtn.style.background = "linear-gradient(135deg, #ff2a4b 0%, #b3122b 100%)";
+                    clearInterval(timerInterval);
+                }
+            });
+        }
+
+        function drawGraph() {
+            if (!ctx || !canvas) return;
+            const width = canvas.width;
+            const height = canvas.height;
+            ctx.clearRect(0, 0, width, height);
+
+            if (graphData.length < 2) return;
+
+            const maxVal = Math.max(...graphData, 100);
+            const minVal = 0;
+
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, (height / 4) * i);
+                ctx.lineTo(width, (height / 4) * i);
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.strokeStyle = "#ff2a4b";
+            ctx.lineWidth = 3;
+            ctx.shadowColor = "#ff2a4b";
+            ctx.shadowBlur = 10;
+
+            const step = width / (graphData.length - 1);
+
+            for (let i = 0; i < graphData.length; i++) {
+                const x = i * step;
+                const normalized = (graphData[i] - minVal) / (maxVal - minVal);
+                const y = height - (normalized * (height - 20) + 10);
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, 'rgba(255, 42, 75, 0.45)');
+            gradient.addColorStop(0.8, 'rgba(0, 240, 255, 0.1)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx.lineTo((graphData.length - 1) * step, height);
+            ctx.lineTo(0, height);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            const lastIdx = graphData.length - 1;
+            const lastX = lastIdx * step;
+            const lastNorm = (graphData[lastIdx] - minVal) / (maxVal - minVal);
+            const lastY = height - (lastNorm * (height - 20) + 10);
+
+            ctx.beginPath();
+            ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = "#00f0ff";
+            ctx.shadowColor = "#00f0ff";
+            ctx.shadowBlur = 12;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    </script>
+</body>
+</html>
